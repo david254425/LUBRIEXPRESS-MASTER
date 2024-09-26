@@ -1,4 +1,7 @@
 <?php
+include 'funcion.php'; // Incluir archivo donde tienes la función de contar productos
+?>
+<?php
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -124,6 +127,9 @@ https://templatemo.com/tm-559-zay-shop
                         <li class="nav-item">
                             <a class="nav-link" href="login.php">Login</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="logout.php">Cerrar Sesión</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="navbar align-self-center d-flex">
@@ -141,9 +147,18 @@ https://templatemo.com/tm-559-zay-shop
                     </a>
                     <a class="nav-icon position-relative text-decoration-none" href="carrito.php">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                        <span
-                            class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"  href="carrito.php">7</span>
+                        <?php
+                        // Obtenemos la cantidad de productos en el carrito
+                        $total_items = count_cart_items();
+                        ?>
+                        <!-- Mostramos el número solo si hay productos en el carrito -->
+                        <?php if ($total_items > 0): ?>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light text-dark">
+                                <?php echo $total_items; ?>
+                            </span>
+                        <?php endif; ?>
                     </a>
+
                 </div>
             </div>
         </div>
@@ -284,16 +299,16 @@ https://templatemo.com/tm-559-zay-shop
                                 <li>Volumen del aceite de motor: 1L</li>
                                 <li>Unidad por envase: 1</li>
                                 <li>Tipo de aceite de motor: Sintético</li>
-                            <li>Tipo de vehículo: Motos y Cuatriciclos</li>
+                                <li>Tipo de vehículo: Motos y Cuatriciclos</li>
                             </ul>
-                        <form action="producto_liquimotorbike.php" method="POST">
-                            <input type="hidden" name="product_id" value="153">
-                            <input type="hidden" name="product_name" value="Liquimoly Motorbike 10W-40">
-                            <input type="hidden" name="product_price" value="18400.00">
-                            <label for="quantity">Cantidad:</label>
-                            <input type="number" name="quantity" value="1" min="1">
-                            <input type="submit" name="submit" value="Añadir al carrito">
-                        </form>
+                            <form action="producto_liquimotorbike.php" method="POST">
+                                <input type="hidden" name="product_id" value="153">
+                                <input type="hidden" name="product_name" value="Liquimoly Motorbike 10W-40">
+                                <input type="hidden" name="product_price" value="18400.00">
+                                <label for="quantity">Cantidad:</label>
+                                <input type="number" name="quantity" value="1" min="1">
+                                <input type="submit" name="submit" value="Añadir al carrito">
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -390,26 +405,26 @@ https://templatemo.com/tm-559-zay-shop
             slidesToScroll: 3,
             dots: true,
             responsive: [{
-                breakpoint: 1024,
-                settings: {
-                    slidesToShow: 3,
-                    slidesToScroll: 3
+                    breakpoint: 1024,
+                    settings: {
+                        slidesToShow: 3,
+                        slidesToScroll: 3
+                    }
+                },
+                {
+                    breakpoint: 600,
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 3
+                    }
+                },
+                {
+                    breakpoint: 480,
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 3
+                    }
                 }
-            },
-            {
-                breakpoint: 600,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 3
-                }
-            },
-            {
-                breakpoint: 480,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 3
-                }
-            }
             ]
         });
     </script>

@@ -1,3 +1,58 @@
+<?php
+include 'funcion.php'; // Incluir archivo donde tienes la función de contar productos
+?>
+<?php
+if (isset($_COOKIE['bienvenida'])) {
+    $Bienvenida = $_COOKIE['bienvenida'];
+    echo $Bienvenida;
+} else {
+    echo "Bienvenido";
+}
+
+
+include('database.php'); // Incluye el archivo con las credenciales
+
+// Inicializa las variables de usuario y contraseña
+$usuario = "";
+$password = "";
+
+// Variable para almacenar mensajes de error
+$error = "";
+
+// Verifica si se ha enviado el formulario
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Obtén los valores del formulario
+    $usuario = $_POST["usuario"];
+    $password = $_POST["password"];
+
+    // Crear la conexión a la base de datos
+    $conn = new mysqli($servername, $username, '', $dbname);
+
+    // Verifica la conexión
+    if ($conn->connect_error) {
+        die("Error en la conexión a la base de datos: " . $conn->connect_error);
+    }
+
+    // Consulta para verificar el inicio de sesión
+    $sql = "SELECT * FROM registros WHERE usuario = '$usuario' AND password = '$password'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows == 1) {
+        // El inicio de sesión fue exitoso, redirige a la página de bienvenida o a donde desees
+        setcookie("bienvenida", "Bienvenido: $usuario", time() + 3600, "/", $_SERVER['SERVER_NAME'], false, true);
+
+
+        header("Location: index.php");
+        exit();
+    } else {
+        $error = "Nombre de usuario o contraseña incorrectos";
+    }
+
+    // Cierra la conexión a la base de datos
+    $conn->close();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,8 +69,7 @@
     <link rel="stylesheet" href="assets/css/custom.css">
 
     <!-- Load fonts style after rendering the layout styles -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
     <link rel="stylesheet" href="assets/css/fontawesome.min.css">
     <!--
     
@@ -33,19 +87,14 @@ https://templatemo.com/tm-559-zay-shop
             <div class="w-100 d-flex justify-content-between">
                 <div>
                     <i class="fa fa-envelope mx-2"></i>
-                    <a class="navbar-sm-brand text-light text-decoration-none"
-                        href="lubriexpress@gmail.com">lubriexpress@gmail.com</a>
+                    <a class="navbar-sm-brand text-light text-decoration-none" href="lubriexpress@gmail.com">lubriexpress@gmail.com</a>
                     <i class="fa fa-phone mx-2"></i>
-                    <a class="navbar-sm-brand text-light text-decoration-none"
-                        href="tel:2634-522248 - 2634-346714">2634-522248 - 2634-346714</a>
+                    <a class="navbar-sm-brand text-light text-decoration-none" href="tel:2634-522248 - 2634-346714">2634-522248 - 2634-346714</a>
                 </div>
                 <div>
-                    <a class="text-light" href="https://fb.com/lubriexpress" target="_blank" rel="sponsored"><i
-                            class="fab fa-facebook-f fa-sm fa-fw me-2"></i></a>
-                    <a class="text-light" href="https://www.instagram.com/lubriexpress" target="_blank"><i
-                            class="fab fa-instagram fa-sm fa-fw me-2"></i></a>
-                    <a class="text-light" href="https://twitter.com/lubriexpress" target="_blank"><i
-                            class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
+                    <a class="text-light" href="https://fb.com/lubriexpress" target="_blank" rel="sponsored"><i class="fab fa-facebook-f fa-sm fa-fw me-2"></i></a>
+                    <a class="text-light" href="https://www.instagram.com/lubriexpress" target="_blank"><i class="fab fa-instagram fa-sm fa-fw me-2"></i></a>
+                    <a class="text-light" href="https://twitter.com/lubriexpress" target="_blank"><i class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
                 </div>
             </div>
         </div>
@@ -61,14 +110,11 @@ https://templatemo.com/tm-559-zay-shop
                 LUBRIEXPRESS
             </a>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
-                data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between"
-                id="templatemo_main_nav">
+            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between" id="templatemo_main_nav">
                 <div class="flex-fill">
                     <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
                         <li class="nav-item">
@@ -86,6 +132,9 @@ https://templatemo.com/tm-559-zay-shop
                         <li class="nav-item">
                             <a class="nav-link" href="login.php">Login</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="logout.php">Cerrar Sesión</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="navbar align-self-center d-flex">
@@ -97,73 +146,55 @@ https://templatemo.com/tm-559-zay-shop
                             </div>
                         </div>
                     </div>
-                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal"
-                        data-bs-target="#templatemo_search">
+                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
                         <i class="fa fa-fw fa-search text-dark mr-2"></i>
                     </a>
                     <a class="nav-icon position-relative text-decoration-none" href="carrito.php">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                        <span
-                            class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">7</span>
+                        <?php
+                        // Obtenemos la cantidad de productos en el carrito
+                        $total_items = count_cart_items();
+                        ?>
+                        <!-- Mostramos el número solo si hay productos en el carrito -->
+                        <?php if ($total_items > 0): ?>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light text-dark">
+                                <?php echo $total_items; ?>
+                            </span>
+                        <?php endif; ?>
                     </a>
+
                 </div>
             </div>
         </div>
     </nav>
     <!-- Close Header -->
-    
-     <!-- Modal -->
-     <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="w-100 pt-1 mb-5 text-right">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="" method="get" class="modal-content modal-body border-0 p-0">
-                <div class="input-group mb-2">
-                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Buscar ...">
-                    <button type="submit" class="input-group-text bg-success text-light">
-                        <i class="fa fa-fw fa-search text-white"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
     <!-- Open Form -->
     <div class="container">
         <div class="abs-center">
-          <form action="login.php" id="form" class="border p-3 form" method="POST" name="login_user">
-            <div class="form-group">
-              <label for="text">Usuario</label>
-              <input type="text" name="usuario" id="usuario" placeholder="Solo letras y numeros" class="form-control"
-              required autocomplete="on" 
-              onkeypress="return (
-              (event.charCode >= 48 && event.charCode <= 57)
-              || 
-              (event.charCode >= 65 && event.charCode <= 90)
-              || 
-              (event.charCode >= 97 && event.charCode <= 122))" minlength="5" maxlength="16"/>
-            </div>
-            <div class="form-group">
-              <label for="password">Contraseña</label>
-              <input type="password" name="password" placeholder="Solo letras y numeros" id="password" class="form-control"
-              required autocomplete="on" onkeypress="return (
-              (event.charCode >= 48 && event.charCode <= 57)
-              || 
-              (event.charCode >= 65 && event.charCode <= 90)
-              || 
-              (event.charCode >= 97 && event.charCode <= 122))" minlength="8" maxlength="16"/>
-            </div>
-            <div class="form-group" style="width: 300px;">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                <label class="mx-auto" style="width: 100px;" for=exampleCheck1>Recordar</label>
-            </div>
-            <div class="form-group" style="width: 300px;">
-                <a class="mx-auto" style="width: 100px;" href="register.php" for=exampleCheck1>Registrar</a>
-            </div>
-          <div>  <button type="submit" class="btn btn-primary">Login</button></div>     
-          </form>
+            <form method="post" action="login.php" class="border p-3 form">
+                <div class="form-group">
+                    <label for="usuario">Usuario</label>
+                    <input type="text" name="usuario" id="usuario" placeholder="Solo letras y numeros" class="form-control" required autocomplete="off" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) ||
+             (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122))" min="1" />
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" name="password" id="password" placeholder="Solo letras y numeros" class="form-control" required autocomplete="off" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || 
+              (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122))" min="4" maxlength="16" />
+                </div>
+                <div class="form-group" style="width: 300px;">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                    <label class="mx-auto" style="width: 100px;" for=exampleCheck1>Recordar</label>
+                </div>
+                <div class="form-group" style="width: 300px;">
+                    <a class="mx-auto" style="width: 100px;" href="register.php" for=exampleCheck1>Registrar</a>
+                </div>
+                <div class="text-danger"><?php echo $error; ?></div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
         </div>
-      </div>
+    </div>
+</body>
 <!-- Close Form -->
 <!-- Start Footer -->
 <footer class="bg-dark" id="tempaltemo_footer">
@@ -202,22 +233,19 @@ https://templatemo.com/tm-559-zay-shop
             <div class="col-auto me-auto">
                 <ul class="list-inline text-left footer-icons">
                     <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a rel="nofollow" class="text-light text-decoration-none" target="_blank"
-                            href="http://fb.com/lubriexpress"><i class="fab fa-facebook-f fa-lg fa-fw"></i></a>
+                        <a rel="nofollow" class="text-light text-decoration-none" target="_blank" href="http://fb.com/lubriexpress"><i class="fab fa-facebook-f fa-lg fa-fw"></i></a>
                     </li>
                     <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank"
-                            href="https://www.instagram.com/lubriexpress"><i
-                                class="fab fa-instagram fa-lg fa-fw"></i></a>
+                        <a class="text-light text-decoration-none" target="_blank" href="https://www.instagram.com/lubriexpress"><i class="fab fa-instagram fa-lg fa-fw"></i></a>
                     </li>
                     <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank"
-                            href="https://twitter.com/lubriexpress"><i class="fab fa-twitter fa-lg fa-fw"></i></a>
+                        <a class="text-light text-decoration-none" target="_blank" href="https://twitter.com/lubriexpress"><i class="fab fa-twitter fa-lg fa-fw"></i></a>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
+
     <div class="w-100 bg-black py-3">
         <div class="container">
             <div class="row pt-2">
@@ -232,6 +260,7 @@ https://templatemo.com/tm-559-zay-shop
     </div>
 </footer>
 <!-- End Footer -->
+
 <!-- Start Script -->
 <script src="assets/js/jquery-1.11.0.min.js"></script>
 <script src="assets/js/jquery-migrate-1.2.1.min.js"></script>
@@ -240,4 +269,5 @@ https://templatemo.com/tm-559-zay-shop
 <script src="assets/js/custom.js"></script>
 <script src="assets/js/login.js"></script>
 <!-- End Script -->
-</body>
+
+</html>

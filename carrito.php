@@ -1,4 +1,7 @@
 <?php
+include 'funcion.php'; // Incluir archivo donde tienes la función de contar productos
+?>
+<?php
 // Iniciar la sesión solo si no ha sido iniciada
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -29,19 +32,21 @@ if (isset($_POST['remove_product'])) {
 }
 
 // Función para verificar si el carrito está vacío
-function is_cart_empty() {
+function is_cart_empty()
+{
     return empty($_SESSION['cart']);
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>LubriExpress</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="apple-touch-icon" href="assets/img/apple-icon.png">
+    <link rel="apple-touch-icon" href="favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
 
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
@@ -105,12 +110,24 @@ function is_cart_empty() {
                         <li class="nav-item">
                             <a class="nav-link" href="login.php">Login</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="logout.php">Cerrar Sesión</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="navbar align-self-center d-flex">
                     <a class="nav-icon position-relative text-decoration-none" href="carrito.php">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark" href="carrito.php">7</span>
+                        <?php
+                        // Obtenemos la cantidad de productos en el carrito
+                        $total_items = count_cart_items();
+                        ?>
+                        <!-- Mostramos el número solo si hay productos en el carrito -->
+                        <?php if ($total_items > 0): ?>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light text-dark">
+                                <?php echo $total_items; ?>
+                            </span>
+                        <?php endif; ?>
                     </a>
                 </div>
             </div>
@@ -118,9 +135,9 @@ function is_cart_empty() {
     </nav>
     <!-- Close Header -->
 
-  <!-- Carrito de Compras -->
-  <div class="container">
-        <h1>Tu Carrito de Compras</h1>
+    <!-- Carrito de Compras -->
+    <div class="container">
+        <h1 style="color: green;">Tu Carrito de Compras</h1>
         <table class="table">
             <thead>
                 <tr>
@@ -132,13 +149,13 @@ function is_cart_empty() {
                 </tr>
             </thead>
             <tbody>
-            <?php
-            // Si el carrito no está vacío, mostrar los productos
-            if (!is_cart_empty()) {
-                $total = 0;
-                foreach ($_SESSION['cart'] as $product_id => $product_details) {
-                    $subtotal = $product_details['price'] * $product_details['quantity'];
-                    echo "<tr>
+                <?php
+                // Si el carrito no está vacío, mostrar los productos
+                if (!is_cart_empty()) {
+                    $total = 0;
+                    foreach ($_SESSION['cart'] as $product_id => $product_details) {
+                        $subtotal = $product_details['price'] * $product_details['quantity'];
+                        echo "<tr>
                             <td>{$product_details['name']}</td>
                             <td>\${$product_details['price']}</td>
                             <td>
@@ -156,85 +173,85 @@ function is_cart_empty() {
                                 </form>
                             </td>
                           </tr>";
-                    $total += $subtotal;
-                }
-                echo "<tr>
+                        $total += $subtotal;
+                    }
+                    echo "<tr>
                         <td colspan='3'><strong>Total</strong></td>
                         <td><strong>\${$total}</strong></td>
                         <td></td>
                       </tr>";
-            } else {
-                echo "<tr><td colspan='5'>El carrito está vacío.</td></tr>";
-            }
-            ?>
+                } else {
+                    echo "<tr><td colspan='5'>El carrito está vacío.</td></tr>";
+                }
+                ?>
             </tbody>
         </table>
     </div>
 
-<!-- Start Footer -->
-<footer class="bg-dark" id="tempaltemo_footer">
-    <div class="container">
-        <div class="row">
-
-            <div class="col-md-4 pt-5">
-                <h2 class="h2 text-success border-bottom pb-3 border-light logo">LubriExpress</h2>
-                <ul class="list-unstyled text-light footer-link-list">
-                    <li>
-                        <i class="fa fa-phone fa-fw"></i>
-                        <a class="text-decoration-none" href="tel:2634-522248 - 2634-346714">2634-522248 - 2634-346714</a>
-                    </li>
-                    <li>
-                        <i class="fa fa-envelope fa-fw"></i>
-                        <a class="text-decoration-none" href="lubriexpress@gmail.com">lubriexpress@gmail.com</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="col-md-4 pt-5">
-                <h2 class="h2 text-light border-bottom pb-3 border-light">Marcas</h2>
-                <ul class="list-unstyled text-light footer-link-list">
-                    <li><a class="text-decoration-none" href="https://www.shell.com/">SHELL</a></li>
-                    <li><a class="text-decoration-none" href="https://www.bardahl.com/">BARDAHL</a></li>
-                    <li><a class="text-decoration-none" href="https://www.liquimoly.com/">LIQUI MOLY</a></li>
-                    <li><a class="text-decoration-none" href="https://www.ypf.com/">YPF</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="row text-light mb-4">
-            <div class="col-12 mb-3">
-                <div class="w-100 my-3 border-top border-light"></div>
-            </div>
-            <div class="col-auto me-auto">
-                <ul class="list-inline text-left footer-icons">
-                    <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a rel="nofollow" class="text-light text-decoration-none" target="_blank" href="http://fb.com/lubriexpress"><i class="fab fa-facebook-f fa-lg fa-fw"></i></a>
-                    </li>
-                    <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="https://www.instagram.com/lubriexpress"><i class="fab fa-instagram fa-lg fa-fw"></i></a>
-                    </li>
-                    <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="https://twitter.com/lubriexpress"><i class="fab fa-twitter fa-lg fa-fw"></i></a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <div class="w-100 bg-black py-3">
+    <!-- Start Footer -->
+    <footer class="bg-dark" id="tempaltemo_footer">
         <div class="container">
-            <div class="row pt-2">
-                <div class="col-12">
-                    <p class="text-left text-light">
-                        Copyright &copy; 2023 LUBRIEXPRESS
-                        | Hecho por Ferreyra Ignacio y Gonzalez David
-                    </p>
+            <div class="row">
+
+                <div class="col-md-4 pt-5">
+                    <h2 class="h2 text-success border-bottom pb-3 border-light logo">LubriExpress</h2>
+                    <ul class="list-unstyled text-light footer-link-list">
+                        <li>
+                            <i class="fa fa-phone fa-fw"></i>
+                            <a class="text-decoration-none" href="tel:2634-522248 - 2634-346714">2634-522248 - 2634-346714</a>
+                        </li>
+                        <li>
+                            <i class="fa fa-envelope fa-fw"></i>
+                            <a class="text-decoration-none" href="lubriexpress@gmail.com">lubriexpress@gmail.com</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-4 pt-5">
+                    <h2 class="h2 text-light border-bottom pb-3 border-light">Marcas</h2>
+                    <ul class="list-unstyled text-light footer-link-list">
+                        <li><a class="text-decoration-none" href="https://www.shell.com/">SHELL</a></li>
+                        <li><a class="text-decoration-none" href="https://www.bardahl.com/">BARDAHL</a></li>
+                        <li><a class="text-decoration-none" href="https://www.liquimoly.com/">LIQUI MOLY</a></li>
+                        <li><a class="text-decoration-none" href="https://www.ypf.com/">YPF</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row text-light mb-4">
+                <div class="col-12 mb-3">
+                    <div class="w-100 my-3 border-top border-light"></div>
+                </div>
+                <div class="col-auto me-auto">
+                    <ul class="list-inline text-left footer-icons">
+                        <li class="list-inline-item border border-light rounded-circle text-center">
+                            <a rel="nofollow" class="text-light text-decoration-none" target="_blank" href="http://fb.com/lubriexpress"><i class="fab fa-facebook-f fa-lg fa-fw"></i></a>
+                        </li>
+                        <li class="list-inline-item border border-light rounded-circle text-center">
+                            <a class="text-light text-decoration-none" target="_blank" href="https://www.instagram.com/lubriexpress"><i class="fab fa-instagram fa-lg fa-fw"></i></a>
+                        </li>
+                        <li class="list-inline-item border border-light rounded-circle text-center">
+                            <a class="text-light text-decoration-none" target="_blank" href="https://twitter.com/lubriexpress"><i class="fab fa-twitter fa-lg fa-fw"></i></a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
-    </div>
 
-</footer>
-<!-- End Footer -->
+        <div class="w-100 bg-black py-3">
+            <div class="container">
+                <div class="row pt-2">
+                    <div class="col-12">
+                        <p class="text-left text-light">
+                            Copyright &copy; 2023 LUBRIEXPRESS
+                            | Hecho por Ferreyra Ignacio y Gonzalez David
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </footer>
+    <!-- End Footer -->
 
     <script src="assets/js/jquery-1.11.0.min.js"></script>
     <script src="assets/js/jquery-migrate-1.2.1.min.js"></script>
@@ -242,4 +259,5 @@ function is_cart_empty() {
     <script src="assets/js/templatemo.js"></script>
     <script src="assets/js/custom.js"></script>
 </body>
+
 </html>

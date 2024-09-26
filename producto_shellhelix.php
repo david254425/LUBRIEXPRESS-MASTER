@@ -1,4 +1,7 @@
 <?php
+include 'funcion.php'; // Incluir archivo donde tienes la función de contar productos
+?>
+<?php
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -54,7 +57,7 @@ if (isset($_POST['submit'])) {
     <!-- Slick -->
     <link rel="stylesheet" type="text/css" href="assets/css/slick.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/slick-theme.css">
-<!--
+    <!--
     
 TemplateMo 559 Zay Shop
 
@@ -115,6 +118,9 @@ https://templatemo.com/tm-559-zay-shop
                         <li class="nav-item">
                             <a class="nav-link" href="login.php">Login</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="logout.php">Cerrar Sesión</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="navbar align-self-center d-flex">
@@ -131,8 +137,18 @@ https://templatemo.com/tm-559-zay-shop
                     </a>
                     <a class="nav-icon position-relative text-decoration-none" href="carrito.php">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark" href="carrito.php">7</span>
+                        <?php
+                        // Obtenemos la cantidad de productos en el carrito
+                        $total_items = count_cart_items();
+                        ?>
+                        <!-- Mostramos el número solo si hay productos en el carrito -->
+                        <?php if ($total_items > 0): ?>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light text-dark">
+                                <?php echo $total_items; ?>
+                            </span>
+                        <?php endif; ?>
                     </a>
+
                 </div>
             </div>
         </div>
@@ -252,12 +268,12 @@ https://templatemo.com/tm-559-zay-shop
 
                             <h6>Descripción:</h6>
                             <p>
-                            Aceite de motor sintético de alto rendimiento. Proporciona una lubricación excepcional en una amplia gama de condiciones y temperaturas.
-                            Puede mantener el motor tan limpio como salido de fábrica. 
-                            Excepcional protección y limpieza, incluso con los intervalos de 
-                            cambio de aceite más largos recomendados por el fabricante.
-                            Aprobación de numerosos fabricantes de vehículos de alto desempeño y es el único aceite de motor que usan en Ferrari.
-                     </p>
+                                Aceite de motor sintético de alto rendimiento. Proporciona una lubricación excepcional en una amplia gama de condiciones y temperaturas.
+                                Puede mantener el motor tan limpio como salido de fábrica.
+                                Excepcional protección y limpieza, incluso con los intervalos de
+                                cambio de aceite más largos recomendados por el fabricante.
+                                Aprobación de numerosos fabricantes de vehículos de alto desempeño y es el único aceite de motor que usan en Ferrari.
+                            </p>
                             <h6>Especificaciones:</h6>
                             <ul class="list-unstyled pb-3">
                                 <li>5 Litros</li>
@@ -269,16 +285,16 @@ https://templatemo.com/tm-559-zay-shop
                                 <li>Ferrari</li>
                                 <li>Renault: RN 0700/0710/ </li>
                                 <li>API: SN/CF</li>
-                                    
+
                             </ul>
-                        
+
                             <form action="producto_shellhelix.php" method="POST">
-                            <input type="hidden" name="product_id" value="152">
-                            <input type="hidden" name="product_name" value="Shell Helix ULTRA 5W-40">
-                            <input type="hidden" name="product_price" value="18350.00">
-                            <label for="quantity">Cantidad:</label>
-                            <input type="number" name="quantity" value="1" min="1">
-                            <input type="submit" name="submit" value="Añadir al carrito">
+                                <input type="hidden" name="product_id" value="152">
+                                <input type="hidden" name="product_name" value="Shell Helix ULTRA 5W-40">
+                                <input type="hidden" name="product_price" value="18350.00">
+                                <label for="quantity">Cantidad:</label>
+                                <input type="number" name="quantity" value="1" min="1">
+                                <input type="submit" name="submit" value="Añadir al carrito">
                             </form>
 
                         </div>
@@ -293,7 +309,7 @@ https://templatemo.com/tm-559-zay-shop
     <footer class="bg-dark" id="tempaltemo_footer">
         <div class="container">
             <div class="row">
-    
+
                 <div class="col-md-4 pt-5">
                     <h2 class="h2 text-success border-bottom pb-3 border-light logo">LubriExpress</h2>
                     <ul class="list-unstyled text-light footer-link-list">
@@ -307,7 +323,7 @@ https://templatemo.com/tm-559-zay-shop
                         </li>
                     </ul>
                 </div>
-    
+
                 <div class="col-md-4 pt-5">
                     <h2 class="h2 text-light border-bottom pb-3 border-light">Marcas</h2>
                     <ul class="list-unstyled text-light footer-link-list">
@@ -332,12 +348,12 @@ https://templatemo.com/tm-559-zay-shop
                         </li>
                         <li class="list-inline-item border border-light rounded-circle text-center">
                             <a class="text-light text-decoration-none" target="_blank" href="https://twitter.com/lubriexpress"><i class="fab fa-twitter fa-lg fa-fw"></i></a>
-                        </li>   
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
-    
+
         <div class="w-100 bg-black py-3">
             <div class="container">
                 <div class="row pt-2">
@@ -350,7 +366,7 @@ https://templatemo.com/tm-559-zay-shop
                 </div>
             </div>
         </div>
-    
+
     </footer>
     <!-- End Footer -->
 

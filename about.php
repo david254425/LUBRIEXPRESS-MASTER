@@ -1,3 +1,15 @@
+<?php
+include 'funcion.php'; // Incluir archivo donde tienes la función de contar productos
+?>
+
+<?php
+if (isset($_COOKIE['bienvenida'])) {
+    $mensajeBienvenida = $_COOKIE['bienvenida'];
+    echo $mensajeBienvenida;
+} else {
+    echo "Bienvenido";
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,7 +28,7 @@
     <!-- Load fonts style after rendering the layout styles -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
     <link rel="stylesheet" href="assets/css/fontawesome.min.css">
-<!--
+    <!--
     
 TemplateMo 559 Zay Shop
 
@@ -77,6 +89,9 @@ https://templatemo.com/tm-559-zay-shop
                         <li class="nav-item">
                             <a class="nav-link" href="login.php">Login</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="logout.php">Cerrar Sesión</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="navbar align-self-center d-flex">
@@ -93,7 +108,16 @@ https://templatemo.com/tm-559-zay-shop
                     </a>
                     <a class="nav-icon position-relative text-decoration-none" href="carrito.php">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">7</span>
+                        <?php
+                        // Obtenemos la cantidad de productos en el carrito
+                        $total_items = count_cart_items();
+                        ?>
+                        <!-- Mostramos el número solo si hay productos en el carrito -->
+                        <?php if ($total_items > 0): ?>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light text-dark">
+                                <?php echo $total_items; ?>
+                            </span>
+                        <?php endif; ?>
                     </a>
                 </div>
             </div>
@@ -118,21 +142,21 @@ https://templatemo.com/tm-559-zay-shop
         </div>
     </div>
 
- <!-- Start Banner -->
+    <!-- Start Banner -->
     <section class="bg-success py-5">
         <div class="container">
             <div class="row align-items-center py-5">
                 <div class="col-md-8 text-white">
                     <h1>Sobre nosotros</h1>
                     <p>
-                        En el corazón de cada vehículo de calidad se encuentra un sistema de lubricación confiable. 
-                        En Lubriexpress, nos enorgullece ofrecer a los conductores argentinos acceso a lubricantes y 
-                        productos premium que se adaptan a las necesidades de todas las marcas de vehículos disponibles 
+                        En el corazón de cada vehículo de calidad se encuentra un sistema de lubricación confiable.
+                        En Lubriexpress, nos enorgullece ofrecer a los conductores argentinos acceso a lubricantes y
+                        productos premium que se adaptan a las necesidades de todas las marcas de vehículos disponibles
                         en el mercado. Prepárate para cuidar tu inversión con productos que maximizan la vida útil y el rendimiento de tu automóvil.
                     </p>
                 </div>
-                <div class="col-md-4" style="margin-top: -95px; padding: 0;">  
-                    <img src="assets/img/lubrimage.png" alt="About Hero"style="width:530px;height:500px;">
+                <div class="col-md-4" style="margin-top: -95px; padding: 0;">
+                    <img src="assets/img/lubrimage.png" alt="About Hero" style="width:530px;height:500px;">
                 </div>
             </div>
         </div>
@@ -146,11 +170,11 @@ https://templatemo.com/tm-559-zay-shop
                 <div class="col-lg-6 m-auto">
                     <h1 class="h1">Nuestras Marcas</h1>
                     <p>
-La excelencia en el mantenimiento vehicular encuentra su hogar en Lubriexpress. 
-Estamos emocionados de ser tu socio confiable en el cuidado automotriz, 
-ofreciendo productos de la más alta calidad para todas las marcas de vehículos presentes en Argentina. 
-Nuestro equipo de expertos está listo para asesorarte en la selección de los lubricantes y productos adecuados para optimizar 
-el funcionamiento de tu vehículo y mantenerlo en su mejor estado. 
+                        La excelencia en el mantenimiento vehicular encuentra su hogar en Lubriexpress.
+                        Estamos emocionados de ser tu socio confiable en el cuidado automotriz,
+                        ofreciendo productos de la más alta calidad para todas las marcas de vehículos presentes en Argentina.
+                        Nuestro equipo de expertos está listo para asesorarte en la selección de los lubricantes y productos adecuados para optimizar
+                        el funcionamiento de tu vehículo y mantenerlo en su mejor estado.
                     </p>
                 </div>
                 <div class="col-lg-9 m-auto tempaltemo-carousel">
@@ -251,7 +275,7 @@ el funcionamiento de tu vehículo y mantenerlo en su mejor estado.
     <footer class="bg-dark" id="tempaltemo_footer">
         <div class="container">
             <div class="row">
-    
+
                 <div class="col-md-4 pt-5">
                     <h2 class="h2 text-success border-bottom pb-3 border-light logo">LubriExpress</h2>
                     <ul class="list-unstyled text-light footer-link-list">
@@ -265,7 +289,7 @@ el funcionamiento de tu vehículo y mantenerlo en su mejor estado.
                         </li>
                     </ul>
                 </div>
-    
+
                 <div class="col-md-4 pt-5">
                     <h2 class="h2 text-light border-bottom pb-3 border-light">Marcas</h2>
                     <ul class="list-unstyled text-light footer-link-list">
@@ -290,12 +314,12 @@ el funcionamiento de tu vehículo y mantenerlo en su mejor estado.
                         </li>
                         <li class="list-inline-item border border-light rounded-circle text-center">
                             <a class="text-light text-decoration-none" target="_blank" href="https://twitter.com/lubriexpress"><i class="fab fa-twitter fa-lg fa-fw"></i></a>
-                        </li>   
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
-    
+
         <div class="w-100 bg-black py-3">
             <div class="container">
                 <div class="row pt-2">
@@ -308,7 +332,7 @@ el funcionamiento de tu vehículo y mantenerlo en su mejor estado.
                 </div>
             </div>
         </div>
-    
+
     </footer>
     <!-- End Footer -->
 

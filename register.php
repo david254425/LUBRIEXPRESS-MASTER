@@ -1,3 +1,44 @@
+<?php
+include 'funcion.php'; // Incluir archivo donde tienes la función de contar productos
+?>
+<?php
+include('database.php'); // Incluye el archivo con las credenciales
+
+// Verifica si se ha enviado el formulario
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Crear la conexión a la base de datos
+    $conn = new mysqli($servername, $username, $password, $dbname);
+
+    // Verifica la conexión
+    if ($conn->connect_error) {
+        die("Error en la conexión a la base de datos: " . $conn->connect_error);
+    }
+
+    // Obtén los valores del formulario
+    $usuario = $_POST["usuario"];
+    $nombre = $_POST["nombre"];
+    $apellido = $_POST["apellido"];
+    $direccion = $_POST["direccion"];
+    $email = $_POST["email"];
+    $password = $_POST["password"];
+
+    // Aplicar hashing a la contraseña
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+    // Inserta los datos en la tabla
+    $sql = "INSERT INTO registros (usuario, nombre, apellido, direccion, email, password) 
+            VALUES ('$usuario', '$nombre', '$apellido', '$direccion', '$email', '$password')";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "Registro exitoso. ¡Gracias por registrarte!";
+    } else {
+        echo "Error al registrar: " . $conn->error;
+    }
+
+    // Cierra la conexión a la base de datos
+    $conn->close();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -119,9 +160,18 @@ https://templatemo.com/tm-559-zay-shop
                     </a>
                     <a class="nav-icon position-relative text-decoration-none" href="carrito.php">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                        <span
-                            class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">7</span>
+                        <?php
+                        // Obtenemos la cantidad de productos en el carrito
+                        $total_items = count_cart_items();
+                        ?>
+                        <!-- Mostramos el número solo si hay productos en el carrito -->
+                        <?php if ($total_items > 0): ?>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light text-dark">
+                                <?php echo $total_items; ?>
+                            </span>
+                        <?php endif; ?>
                     </a>
+
                 </div>
             </div>
         </div>
@@ -131,42 +181,27 @@ https://templatemo.com/tm-559-zay-shop
     <!-- Open Form -->
     <div class="container">
         <div class="abs-center">
-            <form action="#" id="form" class="border p-3 form">
+            <form method="post" action="register.php" class="border p-3 form">
                 <div class="form-group">
                     <label for="text">Usuario</label>
-                    <input type="text" name="usuario" placeholder="Letras y Numeros" id="text" class="form-control"
-                        required autocomplete="on" onkeypress="return (
-              (event.charCode >= 48 && event.charCode <= 57) // NUMEROS
-              || 
-              (event.charCode >= 65 && event.charCode <= 90) //MINUS
-              || 
-              (event.charCode >= 97 && event.charCode <= 122))//MAYUS" minlength="5" maxlength="16" />
+                    <input type="text" name="usuario" id="text" placeholder="Letras y Numeros" class="form-control"
+                        required autocomplete="off" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || //NUMEROS
+                    (event.charCode >= 65 && event.charCode <= 90) || //MINUS 
+                    (event.charCode >= 97 && event.charCode <= 122)) //MAYUS" min="1" />
                 </div>
                 <div class="form-group">
                     <label for="text">Nombre</label>
-                    <input type="text" name="nombre" id="text" placeholder="Letras" class="form-control" required autocomplete="on"
-                        onkeypress="return (             
-              (event.charCode >= 65 && event.charCode <= 90) //MINUS
-              || 
-              (event.charCode >= 97 && event.charCode <= 122))//MAYUS" maxlength="20" />
+                    <input type="text" name="nombre" id="text" placeholder="Letras" class="form-control"
+                        required autocomplete="off" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122))" min="1" />
                 </div>
                 <div class="form-group">
                     <label for="text">Apellido</label>
-                    <input type="text" name="apellido" id="text" placeholder="Letras" class="form-control" required autocomplete="on"
-                        onkeypress="return (             
-                    (event.charCode >= 65 && event.charCode <= 90) //MINUS
-                    || 
-                    (event.charCode >= 97 && event.charCode <= 122))//MAYUS" maxlength="20" />
+                    <input type="text" name="apellido" id="text" placeholder="Letras" class="form-control"
+                        required autocomplete="off" onkeypress="return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122))" min="1" />
                 </div>
                 <div class="form-group">
                     <label for="text">Direccion</label>
-                    <input type="text" name="direccion" id="text" placeholder="Letras y Numeros" class="form-control"
-                    required autocomplete="on" onkeypress="return (
-              (event.charCode >= 48 && event.charCode <= 57) // NUMEROS
-              || 
-              (event.charCode >= 65 && event.charCode <= 90) //MINUS
-              || 
-              (event.charCode >= 97 && event.charCode <= 122))//MAYUS">
+                    <input type="text" name="direccion" id="text" placeholder="Letras y Numeros" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
@@ -174,23 +209,16 @@ https://templatemo.com/tm-559-zay-shop
                 </div>
                 <div class="form-group">
                     <label for="password">Contraseña</label>
-                    <input type="password" name="password" id="password" placeholder="Letras y Numeros" class="form-control"
-                    required autocomplete="on" onkeypress="return (
-                        (event.charCode >= 48 && event.charCode <= 57)
-                        || 
-                        (event.charCode >= 65 && event.charCode <= 90)
-                        || 
-                        (event.charCode >= 97 && event.charCode <= 122))" minlength="8" maxlength="16"/>
+                    <input type="password" name="password" id="password" placeholder="Solo Letras y Numeros" class="form-control"
+                        required autocomplete="off" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || 
+              (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122))" min="4" maxlength="16" />
+
                 </div>
                 <div class="form-group">
                     <label for="password">Repetir contraseña</label>
-                    <input type="password" name="password" id="password" placeholder="Letras y Numeros" class="form-control"
-                    required autocomplete="on" onkeypress="return (
-                        (event.charCode >= 48 && event.charCode <= 57)
-                        || 
-                        (event.charCode >= 65 && event.charCode <= 90)
-                        || 
-                        (event.charCode >= 97 && event.charCode <= 122))" minlength="8" maxlength="16"/>
+                    <input type="password" name="password" id="password" placeholder="Solo letras y numeros" class="form-control"
+                        required autocomplete="off" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || 
+              (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122))" min="4" maxlength="16" />
                 </div>
 
                 <div class="form-group" style="width: 300px;">
